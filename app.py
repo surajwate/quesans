@@ -18,7 +18,7 @@ def get_current_user():
         user = session['user']
 
         db = get_db()
-        user_cur = db.execute('select id, name, password from users where name = ?', [user])
+        user_cur = db.execute('select * from users where name = ?', [user])
         user_result = user_cur.fetchone()
     return user_result
 
@@ -39,7 +39,7 @@ def register():
                     ''', [request.form['name'], hashed_password, '0', '0'])
         db.commit()
         return "<h1>User account for {} has been created.".format(request.form['name'])
-    return render_template('register.html')
+    return render_template('register.html', user=user)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -58,32 +58,32 @@ def login():
         else:
             return "false"
 
-    return render_template('login.html')
+    return render_template('login.html', user=user)
 
 @app.route('/question')
 def question():
     user = get_current_user()
-    return render_template('question.html')
+    return render_template('question.html', user=user)
 
 @app.route('/answer')
 def answer():
     user = get_current_user()
-    return render_template('answer.html')
+    return render_template('answer.html', user=user)
 
 @app.route('/ask')
 def ask():
     user = get_current_user()
-    return render_template('ask.html')
+    return render_template('ask.html', user=user)
 
 @app.route('/unanswered')
 def unanswered():
     user = get_current_user()
-    return render_template('unanswered.html')
+    return render_template('unanswered.html', user=user)
 
 @app.route('/users')
 def users():
     user = get_current_user()
-    return render_template('users.html')
+    return render_template('users.html', user=user)
 
 @app.route('/logout')
 def logout():
