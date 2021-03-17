@@ -67,6 +67,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     user = get_current_user()
+
     if request.method == 'POST':
         db = get_db()
         name = request.form['name']
@@ -106,6 +107,9 @@ def question(question_id):
 @app.route('/answer/<question_id>', methods=['POST', 'GET'])
 def answer(question_id):
     user = get_current_user()
+    if not user:
+        return redirect(url_for('login'))
+
     db = get_db()
 
     if request.method == 'POST':
@@ -127,6 +131,9 @@ def answer(question_id):
 @app.route('/ask', methods=['GET', 'POST'])
 def ask():
     user = get_current_user()
+    if not user:
+        return redirect(url_for('login'))
+
     db = get_db()
     if request.method=='POST':
         db.execute('''
@@ -145,6 +152,9 @@ def ask():
 @app.route('/unanswered')
 def unanswered():
     user = get_current_user()
+    if not user:
+        return redirect(url_for('login'))
+
     db = get_db()
     ques_cur = db.execute('''
                 select 
@@ -164,6 +174,10 @@ def unanswered():
 @app.route('/users')
 def users():
     user = get_current_user()
+
+    if not user:
+        return redirect(url_for('login'))
+
     db = get_db()
     users_cur = db.execute("select id, name, expert, admin from users")
     users_results = users_cur.fetchall()
@@ -171,6 +185,10 @@ def users():
 
 @app.route('/promote/<user_id>')
 def promote(user_id):
+    user = get_current_user()
+    if not user:
+        return redirect(url_for('login'))
+
     db = get_db()
     db.execute('update users set expert = 1 where id = ?', [user_id])
     db.commit()
