@@ -38,7 +38,9 @@ def register():
                     values (?, ?, ?, ?)
                     ''', [request.form['name'], hashed_password, '0', '0'])
         db.commit()
-        return "<h1>User account for {} has been created.".format(request.form['name'])
+
+        session['user'] = request.form['name']
+        return redirect(url_for('index'))
     return render_template('register.html', user=user)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -54,9 +56,9 @@ def login():
 
         if check_password_hash(user_result['password'], password):
             session['user'] = user_result['name']
-            return "true"
+            return redirect(url_for('index'))
         else:
-            return "false"
+            return "<h1>The password is incorrect</h1>"
 
     return render_template('login.html', user=user)
 
