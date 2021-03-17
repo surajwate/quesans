@@ -110,6 +110,9 @@ def answer(question_id):
     if not user:
         return redirect(url_for('login'))
 
+    if user['expert'] == 0:
+        return redirect(url_for('index'))
+
     db = get_db()
 
     if request.method == 'POST':
@@ -155,6 +158,9 @@ def unanswered():
     if not user:
         return redirect(url_for('login'))
 
+    if user['expert'] == 0:
+        return redirect(url_for('index'))
+
     db = get_db()
     ques_cur = db.execute('''
                 select 
@@ -178,6 +184,9 @@ def users():
     if not user:
         return redirect(url_for('login'))
 
+    if user['admin'] == 0:
+        return redirect(url_for('index'))
+
     db = get_db()
     users_cur = db.execute("select id, name, expert, admin from users")
     users_results = users_cur.fetchall()
@@ -188,6 +197,9 @@ def promote(user_id):
     user = get_current_user()
     if not user:
         return redirect(url_for('login'))
+
+    if user['admin'] == 0:
+        return redirect(url_for('index'))
 
     db = get_db()
     db.execute('update users set expert = 1 where id = ?', [user_id])
